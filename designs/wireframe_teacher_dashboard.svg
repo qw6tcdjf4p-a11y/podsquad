@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700">
+  <rect width="100%" height="100%" fill="#F7FAFF"/>
+  <text x="40" y="60" font-family="Nunito Sans" font-size="20" fill="#0B1220">Teacher Dashboard — Science Fair</text>
+
+  <rect x="40" y="90" width="920" height="520" rx="12" fill="#fff" stroke="#eee"/>
+
+  <!-- Project cards -->
+  <rect x="60" y="120" width="260" height="120" rx="10" fill="#fff" stroke="#eee"/>
+  <text x="80" y="150" font-family="Nunito Sans" font-size="14" fill="#0B1220">Project: Science Fair Podcast</text>
+  <text x="80" y="170" font-family="Nunito Sans" font-size="12" fill="#666">Due: Nov 18 • 12 students</text>
+
+  <!-- Student list -->
+  <rect x="340" y="120" width="620" height="420" rx="8" fill="#FAFAFA" stroke="#f0f0f0"/>
+  <text x="360" y="150" font-family="Nunito Sans" font-size="14" fill="#0B1220">Students</text>
+  <text x="360" y="180" font-family="Nunito Sans" font-size="12" fill="#666">Ava — Submitted • Leo — Draft • Mia — Not started</text>
+
+  <text x="60" y="640" font-family="Nunito Sans" font-size="12" fill="#888">Export rubric • Download submissions • AI feedback summary</text>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700">
+  <rect width="100%" height="100%" fill="#F7FAFF"/>
+  <text x="40" y="60" font-family="Nunito Sans" font-size="20" fill="#0B1220">Recording Studio — Zoie</text>
+
+  <!-- Waveform area -->
+  <rect x="40" y="100" width="920" height="280" rx="12" fill="#fff" stroke="#eee"/>
+  <g fill="#1A73E8">
+    <!-- simplified waveform bars -->
+    <rect x="60" y="200" width="6" height="50"/>
+    <rect x="78" y="180" width="6" height="90"/>
+    <rect x="96" y="210" width="6" height="30"/>
+    <rect x="114" y="170" width="6" height="130"/>
+    <rect x="132" y="190" width="6" height="90"/>
+    <rect x="150" y="160" width="6" height="150"/>
+  </g>
+
+  <!-- Controls -->
+  <rect x="360" y="420" width="280" height="80" rx="40" fill="#FFD54F"/>
+  <text x="470" y="470" font-family="Nunito Sans" font-size="18" text-anchor="middle" fill="#0B1220">Record / Stop</text>
+
+  <rect x="680" y="420" width="140" height="48" rx="10" fill="#fff" stroke="#eee"/>
+  <text x="750" y="452" font-family="Nunito Sans" font-size="14" fill="#0B1220">Save Draft</text>
+
+  <!-- AI companion bubble -->
+  <circle cx="880" cy="140" r="44" fill="#FF6F61"/>
+  <text x="860" y="150" font-family="Nunito Sans" font-size="12" fill="#fff">Zoie</text>
+
+  <text x="40" y="620" font-family="Nunito Sans" font-size="12" fill="#888">Waveform animates while recording; avatar lip-syncs during playback.</text>
+</svg>
