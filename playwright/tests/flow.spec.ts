@@ -43,6 +43,19 @@ test('upload -> transcribe -> reply flow (stubbed APIs)', async ({ page }) => {
     });
   });
 
+  // also stub GET /api/episodes to return the saved episode when the library is opened
+  await page.route('**/api/episodes**', async (route) => {
+    if (route.request().method().toUpperCase() === 'GET') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ items: [{ id: 'ep-123', title: 'stubbed reply', audio_url: '/audio/ep-123.mp3', permalink: '/episode/ep-123', age_tier: 'zoie', created_at: new Date().toISOString() }] }),
+      });
+      return;
+    }
+    await route.continue();
+  });
+
   await page.goto('/upload');
 
   // Upload a small local fixture file
