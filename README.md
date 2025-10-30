@@ -1,3 +1,31 @@
+# PodSquad
+
+Local-first starter for a kid-friendly voice reply app.
+
+Environment
+- NEXT_PUBLIC_SUPABASE_URL - your Supabase URL (required for upload/transcribe UI)
+- NEXT_PUBLIC_SUPABASE_ANON_KEY - public anon key for Supabase (required for upload)
+- SUPABASE_SERVICE_ROLE - service role key (required for server-side downloads/transcribe)
+- OPENAI_API_KEY - OpenAI API key (optional; if not set, reply endpoint returns a dev-stub)
+
+Run locally
+- Install: `npm install`
+- Dev: `npm run dev` (runs on port 3001 by default)
+- Build: `npm run build`
+- Start production server: `npm run start`
+
+Tests & smoke
+- Unit tests: `npm test` (Jest)
+- Smoke tests (against a running dev server):
+  - `npm run smoke:root`
+  - `npm run smoke:reply`
+
+CI
+- A GitHub Actions workflow is configured in `.github/workflows/ci.yml` to run build, tests, and smoke checks.
+
+Notes
+- The upload page (`/upload`) provides a client-side audio preview and upload progress.
+- Server routes expect Supabase env vars when interacting with storage. See the README above for which keys are required.
 # PodSquad Starter (Next.js + Supabase + AI)
 
 A minimal, production-leaning starter to build **PodSquad**: a kids' AI podcast app with voice recording,

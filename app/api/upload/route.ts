@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseClient } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
@@ -18,13 +18,13 @@ export async function POST(req: NextRequest) {
       return new Response(JSON.stringify({ error: "No file found in form-data. Expected field: 'file' (or 'audio'/'blob')." }), { status: 400, headers: {"Content-Type":"application/json"} });
     }
 
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!url || !anon) {
-      return new Response(JSON.stringify({ error: "Supabase env not set", hasUrl: Boolean(url), hasAnon: Boolean(anon) }), { status: 500, headers: {"Content-Type":"application/json"} });
+    // Validate and create a Supabase client using the configured public anon key.
+    let supabase;
+    try {
+      supabase = getSupabaseClient();
+    } catch (err: any) {
+      return new Response(JSON.stringify({ error: "Supabase not configured", detail: err?.message || String(err) }), { status: 500, headers: { "Content-Type":"application/json" } });
     }
-
-    const supabase = createClient(url, anon);
 
     // Ensure bucket exists
     const buckets = await supabase.storage.listBuckets();

@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseClient } from "@/lib/supabase";
 
 export const runtime = "edge";
 
@@ -7,8 +7,15 @@ export async function POST(req: NextRequest) {
   const { storagePath } = await req.json();
   if (!storagePath) return new Response(JSON.stringify({ error: "missing storagePath" }), { status: 400 });
 
-  // Get the file back from Supabase to send to Whisper
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+  // Get the file back from Supabase to send to Whisper. This endpoint requires
+  // server credentials capable of reading storage objects (service role).
+  let supabase;
+  try {
+    supabase = getSupabaseClient({ serviceRole: true });
+  } catch (err: any) {
+    return new Response(JSON.stringify({ error: "Supabase service role not configured", detail: err?.message || String(err) }), { status: 500 });
+  }
+
   const { data, error } = await supabase.storage.from("audio").download(storagePath);
   if (error || !data) return new Response(JSON.stringify({ error: error?.message || "download failed" }), { status: 500 });
 
