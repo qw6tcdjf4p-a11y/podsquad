@@ -38,8 +38,8 @@ export default function UploadPage() {
     });
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit(e?: React.FormEvent) {
+    if (e && typeof e.preventDefault === "function") e.preventDefault();
     setError(null);
     setTranscript(null);
     setReply(null);
@@ -120,7 +120,17 @@ export default function UploadPage() {
       )}
 
       {loading && <p>Processing…</p>}
-      {error && <p style={{ color: "red" }}>Error: {error}</p>}
+      {error && (
+        <div style={{ color: "red", marginTop: 8 }}>
+          <p>Error: {error}</p>
+          <div>
+            <button onClick={() => handleSubmit()} disabled={loading} style={{ marginRight: 8 }}>
+              Retry
+            </button>
+            <button onClick={() => { setError(null); setReply(null); setTranscript(null); setStoragePath(null); }}>Reset</button>
+          </div>
+        </div>
+      )}
 
       {storagePath && (
         <div>

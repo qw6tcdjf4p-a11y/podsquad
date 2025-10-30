@@ -4,6 +4,8 @@ create table if not exists profiles (
   id uuid primary key,
   email text,
   display_name text,
+  guardian_email text,
+  guardian_confirmed boolean default false,
   created_at timestamp with time zone default now()
 );
 
@@ -11,7 +13,12 @@ create table if not exists episodes (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references profiles(id),
   title text,
-  age_tier text check (age_tier in ('young','middle','advanced')) default 'young',
+  -- age_tier maps to companion: 'zoie' (5-8), 'ari' (9-12), 'soni' (13-17)
+  age_tier text check (age_tier in ('zoie','ari','soni')) default 'zoie',
+  visibility text check (visibility in ('private','class','public')) default 'private',
+  transcript text,
+  audio_url text,
+  permalink text,
   created_at timestamp with time zone default now()
 );
 
