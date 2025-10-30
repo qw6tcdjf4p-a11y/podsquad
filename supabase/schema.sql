@@ -1,7 +1,7 @@
 -- Enable if needed: create extension if not exists "uuid-ossp";
 
 create table if not exists profiles (
-  id uuid primary key,
+  id uuid primary key default gen_random_uuid(),
   email text,
   display_name text,
   guardian_email text,
@@ -29,6 +29,13 @@ create table if not exists clips (
   transcript text,
   audio_url text,
   created_at timestamp with time zone default now()
+);
+
+create table if not exists guardian_tokens (
+  token text primary key,
+  profile_id uuid references profiles(id) on delete cascade,
+  created_at timestamp with time zone default now(),
+  expires_at timestamp with time zone
 );
 
 -- Storage bucket for audio
