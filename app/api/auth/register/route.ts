@@ -12,10 +12,14 @@ export async function POST(req: NextRequest) {
   if (!display_name) return NextResponse.json({ error: 'display_name required' }, { status: 400 });
 
   try {
-    const supa = getServiceSupabase();
-    // create profile
-    const insert = { email, display_name, guardian_email, guardian_confirmed: false } as any;
-    const r = await supa.from('profiles').insert(insert).select('id').single();
+  const supa = getServiceSupabase();
+  // create profile
+  // If a user_id is supplied (from Supabase Auth), use it as the profile id so
+  // profiles are linked to auth users.
+  const userId = body.user_id || undefined;
+  const insert: any = { email, display_name, guardian_email, guardian_confirmed: false };
+  if (userId) insert.id = userId;
+  const r = await supa.from('profiles').insert(insert).select('id').single();
     if (r.error) return NextResponse.json({ error: r.error.message }, { status: 500 });
     const profileId = r.data?.id;
 

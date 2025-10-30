@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from 'react';
+import { supabaseClient } from '@/lib/supabaseClient';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -8,6 +10,8 @@ export default function RegisterPage() {
   const [guardianEmail, setGuardianEmail] = useState('');
   const [msg, setMsg] = useState<string | null>(null);
   const [guardianToken, setGuardianToken] = useState<string | null>(null);
+  const [password, setPassword] = useState('');
+  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -15,7 +19,17 @@ export default function RegisterPage() {
     setGuardianToken(null);
     const body = { email, display_name: displayName, age: Number(age), guardian_email: guardianEmail };
     try {
-      const r = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      // First, sign up with Supabase Auth so we have a user id to link
+  const pw = password || `${Math.random().toString(36).slice(2, 10)}!`;
+      const supRes = await supabaseClient.auth.signUp({ email: body.email, password: pw });
+      if (supRes.error) {
+        setMsg(supRes.error.message);
+        return;
+      }
+      const user = (supRes.data as any)?.user;
+      const userId = user?.id;
+      // call server to create profile linked to user id
+      const r = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, user_id: userId }) });
       const j = await r.json();
       if (!r.ok) {
         setMsg(j.error || 'Registration failed');
@@ -23,6 +37,8 @@ export default function RegisterPage() {
       }
       setMsg('Registered.');
       if (j.guardian_token) setGuardianToken(j.guardian_token);
+  // redirect to home after signup
+  router.push('/');
     } catch (err: any) {
       setMsg(err?.message || String(err));
     }
@@ -43,6 +59,10 @@ export default function RegisterPage() {
         <div style={{ marginBottom: 8 }}>
           <label>Age</label>
           <input value={age} onChange={(e) => setAge(e.target.value)} />
+        </div>
+        <div style={{ marginBottom: 8 }}>
+          <label>Password (choose one)</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
         {Number(age) < 13 && (
           <div style={{ marginBottom: 8 }}>
