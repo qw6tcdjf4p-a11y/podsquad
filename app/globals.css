@@ -1,0 +1,11 @@
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+button{cursor:pointer}
+.container{max-width:960px;margin:0 auto;padding:24px}
+.card{background:#fff;border:1px solid #eee;border-radius:16px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.flex{display:flex;gap:12px;align-items:center}
+.row{display:flex;gap:12px;align-items:flex-start}
+.grid{display:grid;gap:16px}
+label{font-weight:600}
+input,select{padding:8px 10px;border:1px solid #ddd;border-radius:10px}
+audio{width:100%}
