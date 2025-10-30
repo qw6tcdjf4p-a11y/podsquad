@@ -6,8 +6,12 @@ export default function UploadPage() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
   const [storagePath, setStoragePath] = useState<string | null>(null);
+  const [permalink, setPermalink] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<string | null>(null);
   const [reply, setReply] = useState<string | null>(null);
+  const [title, setTitle] = useState<string>('Untitled Episode');
+  const [ageTier, setAgeTier] = useState<'zoie'|'ari'|'soni'>('zoie');
+  const [visibility, setVisibility] = useState<'private'|'class'|'public'>('private');
   const [ttsPlaying, setTtsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -63,6 +67,32 @@ export default function UploadPage() {
       if (!rp.ok) throw new Error(`reply failed: ${rp.status}`);
       const rpj = await rp.json();
       setReply(rpj.reply || JSON.stringify(rpj));
+      // After reply/transcribe, persist episode metadata to server
+      try {
+        const epRes = await fetch('/api/episodes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title,
+            storagePath: upj.storagePath,
+            transcript: trj.text,
+            age_tier: ageTier,
+            visibility,
+            // created_by will be set server-side when auth is integrated
+          }),
+        });
+        if (epRes.ok) {
+          const epj = await epRes.json();
+          setPermalink(epj.permalink || null);
+        } else {
+          // non-blocking: show error but don't fail the flow
+          const ej = await epRes.json().catch(() => ({}));
+          setError(ej.error || `Failed to save episode (${epRes.status})`);
+        }
+      } catch (err: any) {
+        // ignore save failures for now, but surface to user
+        setError(err?.message || String(err));
+      }
     } catch (err: any) {
       setError(err?.message || String(err));
     } finally {
@@ -99,8 +129,21 @@ export default function UploadPage() {
     <main style={{ padding: 24 }}>
       <h1>Upload audio</h1>
       <form onSubmit={handleSubmit}>
-        <input type="file" accept="audio/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-        <button type="submit" disabled={loading} style={{ marginLeft: 8 }}>Upload & Transcribe</button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
+          <input type="file" accept="audio/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Episode title" />
+          <select value={ageTier} onChange={(e) => setAgeTier(e.target.value as any)}>
+            <option value="zoie">Zoie (5-8)</option>
+            <option value="ari">Ari (9-12)</option>
+            <option value="soni">Soni (13-17)</option>
+          </select>
+          <select value={visibility} onChange={(e) => setVisibility(e.target.value as any)}>
+            <option value="private">Private</option>
+            <option value="class">Class</option>
+            <option value="public">Public</option>
+          </select>
+          <button type="submit" disabled={loading} style={{ marginLeft: 8 }}>Upload & Transcribe</button>
+        </div>
       </form>
 
       {previewUrl && (
@@ -136,6 +179,11 @@ export default function UploadPage() {
         <div>
           <h3>Storage Path</h3>
           <pre>{storagePath}</pre>
+          {permalink && (
+            <div>
+              <strong>Saved:</strong> <a href={permalink}>{permalink}</a>
+            </div>
+          )}
         </div>
       )}
 

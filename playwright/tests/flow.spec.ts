@@ -35,6 +35,14 @@ test('upload -> transcribe -> reply flow (stubbed APIs)', async ({ page }) => {
     await route.fulfill({ status: 200, body: buf, contentType: 'audio/mpeg' });
   });
 
+  await page.route('**/api/episodes', async (route) => {
+    await route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: JSON.stringify({ id: 'ep-123', permalink: '/episode/ep-123' }),
+    });
+  });
+
   await page.goto('/upload');
 
   // Upload a small local fixture file
